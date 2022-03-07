@@ -1,6 +1,6 @@
-exports.EMPLOYEE_NUMBER = 100
+const EMPLOYEE_NUMBER = 5
 
-exports.SALARY_RANGE = {
+const SALARY_RANGE = {
   'Junior Software Engineer': {
     min: 800,
     max: 1200
@@ -18,3 +18,7 @@ exports.SALARY_RANGE = {
     max: 5000
   }
 }
+
+const POSITIONS = Object.keys(SALARY_RANGE)
+
+module.exports = { EMPLOYEE_NUMBER, POSITIONS, SALARY_RANGE }

@@ -8,9 +8,12 @@ const { errorLogger, errorResponder } = require('./errors/errorHandlers')
 
 const app = express()
 
+app.set('x-powered-by', false)
+
 app.use(express.json())
 app.use(router, logger)
-app.use(errorLogger, errorResponder)
+app.use(errorLogger)
+app.use(errorResponder)
 
 app.listen(process.env.PORT, () => {
   console.log(`Server is running: http://localhost:${process.env.PORT}`)
