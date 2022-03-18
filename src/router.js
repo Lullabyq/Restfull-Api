@@ -1,21 +1,24 @@
 const express = require('express')
 
-const { getEmployees, registerEmployee } = require('./contollers/employee.controller')
-const { authenticateEmployee } = require('./contollers/auth.controller')
-const { validateEmployee } = require('./contollers/validator.controller')
+const { getEmployees } = require('./routes/employees')
+const { registerUser } = require('./routes/users')
+const { authenticateUser } = require('./routes/login')
 const authorization = require('./middlewares/authorization')
+const validateNewUser = require('./middlewares/validation')
 
 const router = express.Router()
 
 router.route('/')
   .get((_, res) => res.send('Home page'))
 
-router.route('/authentication')
-  .post(authenticateEmployee)
+router.route('/login')
+  .post(authenticateUser)
+
+router.route('/users')
+  .post(validateNewUser, registerUser)
 
 router.route('/employees')
   .get(authorization, getEmployees)
-  .post(validateEmployee, registerEmployee)
 
 router.route('*')
   .all((_, res) => res.status(404).send('Page not found'))

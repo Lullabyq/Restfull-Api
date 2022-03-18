@@ -1,32 +1,37 @@
 const bcrypt = require('bcryptjs')
-const { sign } = require('jsonwebtoken');
+const jwt = require('jsonwebtoken');
 
-const employees = require('../db/employee')
-const { BadRequestError } = require('../errors/error')
+const { WrongCredentialsError } = require('../errors/error')
 
-exports.authenticateEmployee = (req, res, next) => {
-  const { password, login } = req.body
+exports.registerUser = (plainPass) => {
+  const salt = bcrypt.genSaltSync(10)
+  const password = bcrypt.hashSync(plainPass, salt)
 
-  if (!password || !login) {
-    return next(new BadRequestError())
+  users.push({
+    ...req.body,
+    id: uuidv4(),
+    password
+  })
+
+  return jwt.sign({ sub: id }, process.env.KEY, { expiresIn: 60 * 5 })
+}
+
+exports.authenticateUser = (password, user) => {
+  if (!bcrypt.compareSync(password, user.password)) {
+    throw new WrongCredentialsError()
   }
 
-  const user = employees.find(person => person.login === login)
+  const payload = { sub: user.id }
 
-  if (!user) {
-    return res.status(403).send("User with such login doesn't exist")
-  }
+  return jwt.sign(payload, process.env.KEY, { expiresIn: 60 * 5 })
+}
 
+exports.authorizeUser = (token) => {
   try {
-    if (!bcrypt.compareSync(password, user.password)) {
-      return res.status(403).json('Wrong password')
-    }
+    jwt.verify(token, process.env.KEY)
 
-    const payload = { sub: user.id }
-    const accessToken = sign(payload, process.env.KEY, { expiresIn: 60 * 5 })
-
-    return res.json({ accessToken, refreshToken })
+    return { isValid: true }
   } catch (err) {
-    return next(err)
+    throw new WrongCredentialsError(err.message)
   }
 }

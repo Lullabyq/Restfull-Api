@@ -2,7 +2,6 @@ const Ajv = require('ajv')
 const addFormats = require('ajv-formats')
 
 const { POSITIONS } = require('../constants')
-const employees = require('../db/employee')
 const { BadRequestError } = require('../errors/error')
 
 const ajv = new Ajv()
@@ -13,7 +12,7 @@ const requireAll = (schema) => ({
   required: Object.keys(schema.properties)
 })
 
-const employeeSchema = {
+const userSchema = {
   type: 'object',
   properties: {
     firstName: { type: 'string', maxLength: 100 },
@@ -26,18 +25,18 @@ const employeeSchema = {
   additionalProperties: { type: 'string' }
 }
 
-exports.validateEmployee = (req, res, next) => {
-  const validate = ajv.compile(requireAll(employeeSchema))
+exports.validateUser = (newUser, users) => {
+  const validate = ajv.compile(requireAll(userSchema))
 
-  if (employees.filter(({ login }) => login === req.body.login).length) {
-    return next(
-      new BadRequestError(`User already exists`)
-    )
+  if (users.filter(({ login }) => login === newUser.login).length) {
+    throw new BadRequestError(`User already exists`)
   }
 
-  if (validate(req.body)) {
-    return next()
+  const isValid = validate(newUser)
+
+  if (isValid) {
+    return { isValid, user: newUser }
   }
 
-  return next(validate.errors)
+  return { isValid, errors: validate.errors }
 }

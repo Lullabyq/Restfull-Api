@@ -2,7 +2,7 @@ require('dotenv').config()
 
 const express = require('express')
 
-const router = require('./routes')
+const router = require('./router')
 const logger = require('./middlewares/logger')
 const { errorLogger, errorResponder } = require('./errors/errorHandlers')
 

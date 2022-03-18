@@ -5,4 +5,11 @@ class BadRequestError extends Error {
   }
 }
 
-module.exports = { BadRequestError }
+class WrongCredentialsError extends Error {
+  constructor(message = 'Wrong login or password') {
+    super(message)
+    this.statusCode = 403
+  }
+}
+
+module.exports = { BadRequestError, WrongCredentialsError }
