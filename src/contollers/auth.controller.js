@@ -1,19 +1,25 @@
 const bcrypt = require('bcryptjs')
-const jwt = require('jsonwebtoken');
+const jwt = require('jsonwebtoken')
 
+const { TOKEN_EXP_TIME } = require('../constants')
+const UsersModel = require('../models/users.model')
+const { v4: uuidv4 } = require('uuid')
 const { WrongCredentialsError } = require('../errors/error')
 
-exports.registerUser = (plainPass) => {
+
+exports.registerUser = (userData) => {
   const salt = bcrypt.genSaltSync(10)
-  const password = bcrypt.hashSync(plainPass, salt)
+  const password = bcrypt.hashSync(userData.password, salt)
+  const id = uuidv4()
+  const user = {...userData, id, password}
 
-  users.push({
-    ...req.body,
-    id: uuidv4(),
-    password
-  })
+  UsersModel.save(user)
 
-  return jwt.sign({ sub: id }, process.env.KEY, { expiresIn: 60 * 5 })
+  return jwt.sign(
+    { sub: id },
+    process.env.KEY,
+    { expiresIn: TOKEN_EXP_TIME }
+  )
 }
 
 exports.authenticateUser = (password, user) => {
@@ -21,9 +27,11 @@ exports.authenticateUser = (password, user) => {
     throw new WrongCredentialsError()
   }
 
-  const payload = { sub: user.id }
-
-  return jwt.sign(payload, process.env.KEY, { expiresIn: 60 * 5 })
+  return jwt.sign(
+    { sub: user.id },
+    process.env.KEY,
+    { expiresIn: TOKEN_EXP_TIME }
+  )
 }
 
 exports.authorizeUser = (token) => {

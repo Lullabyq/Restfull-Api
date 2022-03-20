@@ -1,10 +1,12 @@
 const { faker } = require('@faker-js/faker')
-const { SALARY_RANGE, EMPLOYEE_NUMBER, POSITIONS } = require('../constants')
 const { v4: uuidv4 } = require('uuid')
+
+const { SALARY_RANGE, EMPLOYEE_NUMBER, POSITIONS } = require('../constants')
+
 
 faker.seed(1)
 
-const employees = []
+let employees = []
 
 for (let i = 0; i < EMPLOYEE_NUMBER; i++) {
   const position = faker.random.arrayElement(POSITIONS)

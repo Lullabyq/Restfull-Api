@@ -1,7 +1,7 @@
 class BadRequestError extends Error {
-  constructor(message = `Bad request`) {
+  constructor(message = `Bad request`, statusCode = 400) {
     super(message)
-    this.statusCode = 400
+    this.statusCode = statusCode
   }
 }
 
@@ -12,4 +12,15 @@ class WrongCredentialsError extends Error {
   }
 }
 
-module.exports = { BadRequestError, WrongCredentialsError }
+class ServerError extends Error {
+  constructor(message = 'Server Error') {
+    super(message)
+    this.statusCode = 500
+  }
+}
+
+module.exports = {
+  BadRequestError,
+  WrongCredentialsError,
+  ServerError
+}

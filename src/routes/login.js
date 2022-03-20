@@ -1,5 +1,7 @@
-const { authenticateEmployee } = require('../contollers/auth.controller')
-const employees = require('../db/employees')
+const AuthController = require('../contollers/auth.controller')
+const UsersModel = require('../models/users.model')
+const { BadRequestError } = require('../errors/error')
+
 
 exports.authenticateUser = (req, res, next) => {
   const { password, login } = req.body
@@ -8,14 +10,14 @@ exports.authenticateUser = (req, res, next) => {
     return next(new BadRequestError())
   }
 
-  const user = employees.find(person => person.login === login)
+  const user = UsersModel.getUserByLogin(login)
 
   if (!user) {
     return res.status(403).json({ error: 'Wrong password or login' })
   }
 
   try {
-    const accessToken = authenticateEmployee(password, user)
+    const accessToken = AuthController.authenticateUser(password, user)
 
     return res.json({ accessToken })
   } catch (err) {

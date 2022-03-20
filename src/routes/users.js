@@ -1,4 +1,5 @@
-const { registerUser } = require("../contollers/auth.controller")
+const AuthController = require("../contollers/auth.controller")
+const UsersModel = require('../models/users.model')
 
 
 exports.registerUser = (req, res, next) => {
@@ -8,7 +9,13 @@ exports.registerUser = (req, res, next) => {
     return next(new BadRequestError())
   }
 
-  const token = registerUser(password)
+  const token = AuthController.registerUser(req.body)
 
   res.status(201).json({ token })
+}
+
+exports.getUsers = (req, res, next) => {
+  const users = UsersModel.getAll()
+
+  res.json({ data: users })
 }

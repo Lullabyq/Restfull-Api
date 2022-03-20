@@ -1,10 +1,17 @@
 const express = require('express')
 
-const { getEmployees } = require('./routes/employees')
-const { registerUser } = require('./routes/users')
+const {
+  turnToArray,
+  getAllEmployees,
+  getSingleEmployee,
+  addNewEmployees,
+  deleteEmployees
+} = require('./routes/employees')
+const { registerUser, getUsers } = require('./routes/users')
 const { authenticateUser } = require('./routes/login')
 const authorization = require('./middlewares/authorization')
-const validateNewUser = require('./middlewares/validation')
+const { userValidation, employeeValidation } = require('./middlewares/validation')
+
 
 const router = express.Router()
 
@@ -15,10 +22,20 @@ router.route('/login')
   .post(authenticateUser)
 
 router.route('/users')
-  .post(validateNewUser, registerUser)
+  .post(userValidation, registerUser)
+  .get(getUsers)
 
 router.route('/employees')
-  .get(authorization, getEmployees)
+  .all(authorization)
+  .get(getAllEmployees)
+  .post(turnToArray, employeeValidation, addNewEmployees)
+  // .delete(deleteEmployees)
+
+router.route('/employees/:id')
+  .all(authorization)
+  .get(getSingleEmployee)
+  .post(turnToArray, employeeValidation, addNewEmployees)
+  // .delete(deleteEmployees)
 
 router.route('*')
   .all((_, res) => res.status(404).send('Page not found'))

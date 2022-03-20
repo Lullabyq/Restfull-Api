@@ -1,15 +1,16 @@
-const { authorizeUser } = require('../contollers/auth.controller');
-const { BadRequestError } = require('../errors/error');
+const AuthController = require('../contollers/auth.controller');
+const { WrongCredentialsError } = require('../errors/error');
+
 
 module.exports = (req, res, next) => {
   const token = req.get('Authorization')?.replace(/Bearer\s/, '');
 
   if (!token) {
-    next(new BadRequestError())
+    next(new WrongCredentialsError('Try to login first'))
   }
 
   try {
-    authorizeUser()
+    AuthController.authorizeUser(token)
 
     return next()
   } catch (err) {

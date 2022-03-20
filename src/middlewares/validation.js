@@ -1,17 +1,38 @@
-const users = require('../db/employees')
-const validateUser = require('../contollers/validator.controller')
+const ValidationController = require('../contollers/validator.controller')
 
-exports.validate = (req, res, next) => {
+
+const catchErrors = (callback, next) => {
   try {
-    const newUser = req.body
-    const result = validateUser(newUser, users)
+    const result = callback()
 
-    if (result.isValid) {
-      return next()
+    if (!result.isValid) {
+      return next(result.errors)
     }
-
-    return next(result.errors)
   } catch (err) {
     return next(err)
   }
+}
+
+exports.userValidation = (req, res, next) => {
+  const newUser = req.body
+
+  catchErrors(
+    ValidationController.validateUser.bind(null, newUser),
+    next
+  )
+
+  return next()
+}
+
+exports.employeeValidation = (req, res, next) => {
+  const newEmployees = req.body
+
+  newEmployees.forEach(emp => {
+    catchErrors(
+      ValidationController.validateEmployee.bind(null, emp),
+      next
+    )
+  })
+
+  return next()
 }

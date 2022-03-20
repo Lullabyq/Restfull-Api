@@ -1,4 +1,5 @@
-const EMPLOYEE_NUMBER = 5
+exports.TOKEN_EXP_TIME = 5 * 60 * 1000
+exports.EMPLOYEE_NUMBER = 5
 
 const SALARY_RANGE = {
   'Junior Software Engineer': {
@@ -19,6 +20,5 @@ const SALARY_RANGE = {
   }
 }
 
-const POSITIONS = Object.keys(SALARY_RANGE)
-
-module.exports = { EMPLOYEE_NUMBER, POSITIONS, SALARY_RANGE }
+exports.SALARY_RANGE = SALARY_RANGE
+exports.POSITIONS = Object.keys(SALARY_RANGE)
