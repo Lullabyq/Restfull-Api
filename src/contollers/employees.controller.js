@@ -15,11 +15,5 @@ exports.createNewEmployees = (newEmp) => {
 }
 
 // exports.deleteEmployees = (idToDelete) => {
-//   if (!idToDelete) {
-//     employees = []
-
-//     return
-//   }
-
 //   employees = employees.filter(emp => emp.id === idToDelete)
 // }

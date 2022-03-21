@@ -1,9 +1,9 @@
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
+const { v4: uuidv4 } = require('uuid')
 
 const { TOKEN_EXP_TIME } = require('../constants')
 const UsersModel = require('../models/users.model')
-const { v4: uuidv4 } = require('uuid')
 const { WrongCredentialsError } = require('../errors/error')
 
 

@@ -38,8 +38,8 @@ exports.addNewEmployees = (req, res, next) => {
   }
 }
 
-exports.deleteEmployees = (req, res, next) => {
-  const { id } = req.query
+exports.deleteEmployee = (req, res, next) => {
+  const { id } = req.params
 
   EmployeesController.deleteEmployees(id)
 }

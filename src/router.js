@@ -5,7 +5,7 @@ const {
   getAllEmployees,
   getSingleEmployee,
   addNewEmployees,
-  deleteEmployees
+  deleteEmployee
 } = require('./routes/employees')
 const { registerUser, getUsers } = require('./routes/users')
 const { authenticateUser } = require('./routes/login')
@@ -16,7 +16,7 @@ const { userValidation, employeeValidation } = require('./middlewares/validation
 const router = express.Router()
 
 router.route('/')
-  .get((_, res) => res.send('Home page'))
+  .get((_, res) => res.json({ data: 'Home page' }))
 
 router.route('/login')
   .post(authenticateUser)
@@ -29,15 +29,14 @@ router.route('/employees')
   .all(authorization)
   .get(getAllEmployees)
   .post(turnToArray, employeeValidation, addNewEmployees)
-  // .delete(deleteEmployees)
 
 router.route('/employees/:id')
   .all(authorization)
   .get(getSingleEmployee)
-  .post(turnToArray, employeeValidation, addNewEmployees)
-  // .delete(deleteEmployees)
+  .put(turnToArray, employeeValidation, addNewEmployees)
+  // .delete(deleteEmployee)
 
 router.route('*')
-  .all((_, res) => res.status(404).send('Page not found'))
+  .all((_, res) => res.status(404).json({ message: 'Page not found' }))
 
 module.exports = router

@@ -1,38 +1,55 @@
-const ValidationController = require('../contollers/validator.controller')
+const Ajv = require('ajv')
+const addFormats = require('ajv-formats')
+
+const { BadRequestError } = require('../errors/error')
+const EmployeesModel = require('../models/employees.model')
+const UsersModel = require('../models/users.model')
+const userSchema = require('../validationSchemas/userSchema')
+const employeeSchema = require('../validationSchemas/employeeSchema')
 
 
-const catchErrors = (callback, next) => {
-  try {
-    const result = callback()
+const ajv = new Ajv()
+addFormats(ajv)
 
-    if (!result.isValid) {
-      return next(result.errors)
-    }
-  } catch (err) {
-    return next(err)
-  }
-}
+const requireAll = (schema) => ({
+  ...schema,
+  required: Object.keys(schema.properties)
+})
+
 
 exports.userValidation = (req, res, next) => {
   const newUser = req.body
+  const validate = ajv.compile(requireAll(userSchema))
 
-  catchErrors(
-    ValidationController.validateUser.bind(null, newUser),
-    next
-  )
+  if (!UsersModel.checkUniqUser(newUser)) {
+    return next(new BadRequestError(`User already exists`))
+  }
+
+  const result = validate(newUser)
+
+  if (!result.isValid) {
+    return next(result.errors)
+  }
 
   return next()
 }
 
 exports.employeeValidation = (req, res, next) => {
-  const newEmployees = req.body
+  const newEmployee = req.body
+  const validate = ajv.compile(requireAll(employeeSchema))
 
-  newEmployees.forEach(emp => {
-    catchErrors(
-      ValidationController.validateEmployee.bind(null, emp),
-      next
-    )
-  })
+  if (!EmployeesModel.checkUniqEmployee(newEmployee)) {
+    return next(new BadRequestError(
+      `Employee ${newEmployee.firstName} ${newEmployee.lastName} already exist`,
+      409
+    ))
+  }
+
+  const result = validate(newEmployee)
+
+  if (!result.isValid) {
+    return next(result.errors)
+  }
 
   return next()
 }

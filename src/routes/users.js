@@ -1,5 +1,6 @@
 const AuthController = require("../contollers/auth.controller")
 const UsersModel = require('../models/users.model')
+const { BadRequestError } = require('../errors/error')
 
 
 exports.registerUser = (req, res, next) => {
