@@ -1,14 +1,62 @@
-const users = require('../db/users')
+const db = require('../db')
+const { DBConnectionError } = require('../errors/error')
 
 
-exports.checkUniqUser = (newUser) => users
-  .filter(({ login }) => login === newUser.login)
-  .length
+exports.save = async ({ id, password, firstName, lastName, login }) => {
+  try {
+    const res = await db.query(
+      'INSERT INTO users (id, password, firstName, lastName, login) values ($1, $2, $3, $4, $5) RETURNING *',
+      [id, password, firstName, lastName, login]
+    )
 
-exports.save = (user) => {
-  users.push(user)
+    return res.rows[0]
+  } catch (err) {
+    console.log(err.message);
+
+    throw new DBConnectionError()
+  }
 }
 
-exports.getAll = () => users
+exports.getAll = async () => {
+  try {
+    const res = await db.query('SELECT * FROM users')
 
-exports.getUserByLogin = (login) => users.find(person => person.login === login)
+    return res.rows
+  } catch (err) {
+    console.log(err.message);
+
+    throw new DBConnectionError()
+  }
+}
+
+exports.getUserByLogin = async (login) => {
+  try {
+    const res = await db.query(
+      'SELECT * FROM users where login = $1',
+      [login]
+    )
+
+    return res.rows[0]
+  } catch (err) {
+    console.log(err.message);
+
+    throw new DBConnectionError()
+  }
+}
+
+exports.checkUniqUser = async (newUser) => {
+  try {
+    const res = await db.query(
+      'SELECT * FROM users where login = $1',
+      [newUser.login]
+    )
+
+    return !res.rows.length
+  } catch (err) {
+    console.log(err);
+    console.log(err.message);
+
+    throw new DBConnectionError()
+  }
+
+}

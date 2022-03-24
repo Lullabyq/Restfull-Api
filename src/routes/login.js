@@ -3,20 +3,20 @@ const UsersModel = require('../models/users.model')
 const { BadRequestError, WrongCredentialsError } = require('../errors/error')
 
 
-exports.authenticateUser = (req, res, next) => {
-  const { password, login } = req.body
-
-  if (!password || !login) {
-    return next(new BadRequestError())
-  }
-
-  const user = UsersModel.getUserByLogin(login)
-
-  if (!user) {
-    return next(new WrongCredentialsError())
-  }
-
+exports.authenticateUser = async (req, res, next) => {
   try {
+    const { password, login } = req.body
+
+    if (!password || !login) {
+      throw new BadRequestError()
+    }
+
+    const user = await UsersModel.getUserByLogin(login)
+
+    if (!user) {
+      throw new WrongCredentialsError()
+    }
+
     const accessToken = AuthController.authenticateUser(password, user)
 
     return res.json({ accessToken })

@@ -17,21 +17,26 @@ const requireAll = (schema) => ({
 })
 
 
-exports.userValidation = (req, res, next) => {
-  const newUser = req.body
-  const validate = ajv.compile(requireAll(userSchema))
+exports.userValidation = async (req, res, next) => {
+  try {
+    const newUser = req.body
+    const validate = ajv.compile(requireAll(userSchema))
+    const isUniq = await UsersModel.checkUniqUser(newUser)
 
-  if (!UsersModel.checkUniqUser(newUser)) {
-    return next(new BadRequestError(`User already exists`))
+    if (!isUniq) {
+      throw new BadRequestError(`User already exists`)
+    }
+
+    const result = validate(newUser)
+
+    if (!result.isValid) {
+      return next(result.errors)
+    }
+
+    return next()
+  } catch (err) {
+    return next(err)
   }
-
-  const result = validate(newUser)
-
-  if (!result.isValid) {
-    return next(result.errors)
-  }
-
-  return next()
 }
 
 exports.employeeValidation = (req, res, next) => {

@@ -1,4 +1,4 @@
-const express = require('express')
+const Router = require('express-promise-router')
 
 const {
   turnToArray,
@@ -13,7 +13,7 @@ const authorization = require('./middlewares/authorization')
 const { userValidation, employeeValidation } = require('./middlewares/validation')
 
 
-const router = express.Router()
+const router = Router()
 
 router.route('/')
   .get((_, res) => res.json({ data: 'Home page' }))
@@ -34,7 +34,7 @@ router.route('/employees/:id')
   .all(authorization)
   .get(getSingleEmployee)
   .put(turnToArray, employeeValidation, addNewEmployees)
-  // .delete(deleteEmployee)
+  .delete(deleteEmployee)
 
 router.route('*')
   .all((_, res) => res.status(404).json({ message: 'Page not found' }))

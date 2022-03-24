@@ -30,10 +30,11 @@ exports.addNewEmployees = (req, res, next) => {
   const newEmployees = req.body
 
   try {
-    EmployeesController.createNewEmployees(newEmployees)
+    const employees = EmployeesController.createNewEmployees(newEmployees)
 
     return res.status(201).json(employees)
   } catch (err) {
+    console.log(err.message);
     return next(new ServerError())
   }
 }

@@ -3,20 +3,28 @@ const UsersModel = require('../models/users.model')
 const { BadRequestError } = require('../errors/error')
 
 
-exports.registerUser = (req, res, next) => {
-  const { password } = req.body
+exports.registerUser = async (req, res, next) => {
+  try {
+    const { password } = req.body
 
-  if (!password) {
-    return next(new BadRequestError())
+    if (!password) {
+      throw new BadRequestError()
+    }
+
+    const token = await AuthController.registerUser(req.body)
+
+    res.status(201).json({ token })
+  } catch (err) {
+    next(err)
   }
-
-  const token = AuthController.registerUser(req.body)
-
-  res.status(201).json({ token })
 }
 
-exports.getUsers = (req, res, next) => {
-  const users = UsersModel.getAll()
+exports.getUsers = async (req, res, next) => {
+  try {
+    const users = await UsersModel.getAll()
 
-  res.json({ data: users })
+    res.json({ data: users })
+  } catch (err) {
+    next(err)
+  }
 }

@@ -19,8 +19,15 @@ class ServerError extends Error {
   }
 }
 
+class DBConnectionError extends ServerError {
+  constructor(message = 'Fail to connect') {
+    super(message)
+  }
+}
+
 module.exports = {
   BadRequestError,
   WrongCredentialsError,
-  ServerError
+  ServerError,
+  DBConnectionError
 }
