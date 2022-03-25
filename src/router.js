@@ -1,11 +1,11 @@
 const Router = require('express-promise-router')
 
 const {
-  turnToArray,
   getAllEmployees,
   getSingleEmployee,
   addNewEmployees,
-  deleteEmployee
+  deleteEmployee,
+  updateEmployee
 } = require('./routes/employees')
 const { registerUser, getUsers } = require('./routes/users')
 const { authenticateUser } = require('./routes/login')
@@ -28,12 +28,12 @@ router.route('/users')
 router.route('/employees')
   .all(authorization)
   .get(getAllEmployees)
-  .post(turnToArray, employeeValidation, addNewEmployees)
+  .post(employeeValidation, addNewEmployees)
 
 router.route('/employees/:id')
   .all(authorization)
   .get(getSingleEmployee)
-  .put(turnToArray, employeeValidation, addNewEmployees)
+  .put(employeeValidation, updateEmployee)
   .delete(deleteEmployee)
 
 router.route('*')

@@ -7,26 +7,27 @@ const UsersModel = require('../models/users.model')
 const { WrongCredentialsError, ServerError } = require('../errors/error')
 
 
-exports.registerUser = async (userData) => {
+exports.register = async (userData) => {
   try {
     const salt = bcrypt.genSaltSync(10)
     const password = bcrypt.hashSync(userData.password, salt)
     const id = uuidv4()
-    const user = {...userData, id, password}
+    const newUser = {...userData, id, password}
 
-    await UsersModel.save(user)
-
-    return jwt.sign(
+    const user = await UsersModel.save(newUser)
+    const token = jwt.sign(
       { sub: id },
       process.env.JWT_KEY,
       { expiresIn: TOKEN_EXP_TIME }
     )
+
+    return { token, user }
   } catch (err) {
     throw new ServerError()
   }
 }
 
-exports.authenticateUser = (password, user) => {
+exports.authenticate = (password, user) => {
   if (!bcrypt.compareSync(password, user.password)) {
     throw new WrongCredentialsError()
   }
@@ -38,12 +39,36 @@ exports.authenticateUser = (password, user) => {
   )
 }
 
-exports.authorizeUser = (token) => {
+exports.authorize = (token) => {
   try {
     jwt.verify(token, process.env.JWT_KEY)
 
     return { isValid: true }
   } catch (err) {
     throw new WrongCredentialsError(err.message)
+  }
+}
+
+exports.getAll = async () => {
+  try {
+    return await UsersModel.getAll()
+  } catch (err) {
+    throw new ServerError()
+  }
+}
+
+exports.getByLogin = async (login) => {
+  try {
+    return await UsersModel.getByLogin(login)
+  } catch (err) {
+    throw new ServerError()
+  }
+}
+
+exports.checkUniq = async (newUser) => {
+  try {
+    return await UsersModel.checkUniq(newUser)
+  } catch (err) {
+    throw new ServerError()
   }
 }

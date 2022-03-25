@@ -1,4 +1,4 @@
-const AuthController = require('../contollers/auth.controller');
+const AuthController = require('../controllers/auth.controller');
 const { WrongCredentialsError } = require('../errors/error');
 
 
@@ -10,7 +10,7 @@ module.exports = (req, res, next) => {
       throw new WrongCredentialsError('Try to login first')
     }
 
-    AuthController.authorizeUser(token)
+    AuthController.authorize(token)
 
     return next()
   } catch (err) {

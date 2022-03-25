@@ -1,5 +1,4 @@
-const AuthController = require('../contollers/auth.controller')
-const UsersModel = require('../models/users.model')
+const AuthController = require('../controllers/auth.controller')
 const { BadRequestError, WrongCredentialsError } = require('../errors/error')
 
 
@@ -11,13 +10,13 @@ exports.authenticateUser = async (req, res, next) => {
       throw new BadRequestError()
     }
 
-    const user = await UsersModel.getUserByLogin(login)
+    const user = await AuthController.getByLogin(login)
 
     if (!user) {
       throw new WrongCredentialsError()
     }
 
-    const accessToken = AuthController.authenticateUser(password, user)
+    const accessToken = AuthController.authenticate(password, user)
 
     return res.json({ accessToken })
   } catch (err) {

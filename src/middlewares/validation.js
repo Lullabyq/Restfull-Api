@@ -2,10 +2,11 @@ const Ajv = require('ajv')
 const addFormats = require('ajv-formats')
 
 const { BadRequestError } = require('../errors/error')
-const EmployeesModel = require('../models/employees.model')
-const UsersModel = require('../models/users.model')
+const EmployeesController = require('../controllers/employees.controller')
+const AuthController = require('../controllers/auth.controller')
 const userSchema = require('../validationSchemas/userSchema')
 const employeeSchema = require('../validationSchemas/employeeSchema')
+const formatInvalidEmpl = require('../helpers/formatInvalidEmpl')
 
 
 const ajv = new Ajv()
@@ -21,16 +22,16 @@ exports.userValidation = async (req, res, next) => {
   try {
     const newUser = req.body
     const validate = ajv.compile(requireAll(userSchema))
-    const isUniq = await UsersModel.checkUniqUser(newUser)
+    const isUniq = await AuthController.checkUniq(newUser)
 
     if (!isUniq) {
       throw new BadRequestError(`User already exists`)
     }
 
-    const result = validate(newUser)
+    const isValid = validate(newUser)
 
-    if (!result.isValid) {
-      return next(result.errors)
+    if (!isValid) {
+      return next(validate.errors)
     }
 
     return next()
@@ -39,22 +40,45 @@ exports.userValidation = async (req, res, next) => {
   }
 }
 
-exports.employeeValidation = (req, res, next) => {
-  const newEmployee = req.body
+const validateSingleEmployee = async (newEmployee) => {
   const validate = ajv.compile(requireAll(employeeSchema))
+  const isUniq = await EmployeesController.checkUniq(newEmployee)
 
-  if (!EmployeesModel.checkUniqEmployee(newEmployee)) {
-    return next(new BadRequestError(
-      `Employee ${newEmployee.firstName} ${newEmployee.lastName} already exist`,
-      409
-    ))
+  if (!isUniq) {
+    return {
+      employee: newEmployee,
+      isValid: false,
+      messages: [`Employee ${newEmployee.firstName} ${newEmployee.lastName} already exist`]
+    }
   }
 
-  const result = validate(newEmployee)
+  const isValid = validate(newEmployee)
+  const messages = validate.errors?.map(err => err.message)
 
-  if (!result.isValid) {
-    return next(result.errors)
+  return {
+    employee: newEmployee,
+    isValid,
+    messages,
   }
+}
 
-  return next()
+exports.employeeValidation = async (req, res, next) => {
+  try {
+    const newEmployees = Array.isArray(req.body) ? req.body : [req.body]
+    const employeesWithStatus = await Promise.all(newEmployees.map(async (em) => (
+      await validateSingleEmployee(em)
+    )))
+
+    const invalidEmployees = employeesWithStatus.filter(em => !em.isValid)
+
+    if (invalidEmployees.length) {
+      throw { errors: formatInvalidEmpl(invalidEmployees) }
+    }
+
+    req.body = employeesWithStatus.map(em => em.employee)
+
+    return next()
+  } catch (err) {
+    return next(err)
+  }
 }

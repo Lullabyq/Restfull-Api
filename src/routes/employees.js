@@ -1,46 +1,60 @@
-const EmployeesController = require('../contollers/employees.controller')
-const EmployeesModel = require('../models/employees.model')
-const { ServerError } = require('../errors/error')
+const EmployeesController = require('../controllers/employees.controller')
 
 
-exports.turnToArray = (req, res, next) => {
-  const employees = req.body
-
-  if (!Array.isArray(employees)) {
-    req.body = [employees]
-  }
-
-  return next()
-}
-
-exports.getAllEmployees = (req, res, next) => {
-  const employees = EmployeesModel.getAll()
-
-  res.json({ data: employees })
-}
-
-exports.getSingleEmployee = (req, res, next) => {
-  const { id } = req.params
-  const employee = EmployeesModel.getEmployeeById(id)
-
-  res.json({ data: employee })
-}
-
-exports.addNewEmployees = (req, res, next) => {
-  const newEmployees = req.body
-
+exports.getAllEmployees = async (req, res, next) => {
   try {
-    const employees = EmployeesController.createNewEmployees(newEmployees)
+    const employees = await EmployeesController.getMany()
+
+    return res.json({ data: employees })
+  } catch (err) {
+    return next(err)
+  }
+}
+
+exports.getSingleEmployee = async (req, res, next) => {
+  try {
+    const { id } = req.params
+    const employee = await EmployeesController.getById(id)
+
+    return res.json({ data: employee })
+  } catch (err) {
+    return next (err)
+  }
+}
+
+exports.addNewEmployees = async (req, res, next) => {
+  try {
+    const newEmployees = req.body
+    const employees = await EmployeesController.createMany(newEmployees)
 
     return res.status(201).json(employees)
   } catch (err) {
-    console.log(err.message);
-    return next(new ServerError())
+    return next(err)
   }
 }
 
-exports.deleteEmployee = (req, res, next) => {
-  const { id } = req.params
+exports.deleteEmployee = async (req, res, next) => {
+  try {
+    const { id } = req.params
 
-  EmployeesController.deleteEmployees(id)
+    await EmployeesController.deleteOne(id) // can i send request to model?
+  } catch (err) {
+    return next(err)
+  }
+}
+
+exports.updateEmployee = async (req, res, next) => {
+  try {
+    const { id } = req.params
+    const updatedEmployee = {
+      ...req.body,
+      id
+    }
+
+    const employee = await EmployeesController.updateEmployee(updatedEmployee)
+
+    return res.status(200).json({ data: employee })
+  } catch (err) {
+    return next(err)
+  }
 }

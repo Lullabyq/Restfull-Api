@@ -1,4 +1,4 @@
-exports.TOKEN_EXP_TIME = 5 * 60 * 1000
+exports.TOKEN_EXP_TIME = 5 * 60
 exports.EMPLOYEE_NUMBER = 5
 
 const SALARY_RANGE = {
