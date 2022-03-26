@@ -2,7 +2,6 @@ const Ajv = require('ajv')
 const addFormats = require('ajv-formats')
 
 const { BadRequestError } = require('../errors/error')
-const EmployeesController = require('../controllers/employees.controller')
 const AuthController = require('../controllers/auth.controller')
 const userSchema = require('../validationSchemas/userSchema')
 const employeeSchema = require('../validationSchemas/employeeSchema')
@@ -12,19 +11,14 @@ const formatInvalidEmpl = require('../helpers/formatInvalidEmpl')
 const ajv = new Ajv()
 addFormats(ajv)
 
-const requireAll = (schema) => ({
-  ...schema,
-  required: Object.keys(schema.properties)
-})
-
-
 exports.userValidation = async (req, res, next) => {
   try {
     const newUser = req.body
-    const validate = ajv.compile(requireAll(userSchema))
-    const isUniq = await AuthController.checkUniq(newUser)
+    const validate = ajv.compile(userSchema)
 
-    if (!isUniq) {
+    const registredUser = await AuthController.getByLogin(newUser)
+
+    if (registredUser.length) {
       throw new BadRequestError(`User already exists`)
     }
 
@@ -40,34 +34,29 @@ exports.userValidation = async (req, res, next) => {
   }
 }
 
-const validateSingleEmployee = async (newEmployee) => {
-  const validate = ajv.compile(requireAll(employeeSchema))
-  const isUniq = await EmployeesController.checkUniq(newEmployee)
+const validateSingleEmployee = async (employee, isStrict) => {
+  const validate = isStrict
+    ? ajv.compile(employeeSchema.strict)
+    : ajv.compile(employeeSchema.basic)
 
-  if (!isUniq) {
-    return {
-      employee: newEmployee,
-      isValid: false,
-      messages: [`Employee ${newEmployee.firstName} ${newEmployee.lastName} already exist`]
-    }
-  }
-
-  const isValid = validate(newEmployee)
+  const isValid = validate(employee)
   const messages = validate.errors?.map(err => err.message)
 
-  return {
-    employee: newEmployee,
-    isValid,
-    messages,
-  }
+  return { employee, isValid, messages }
 }
 
 exports.employeeValidation = async (req, res, next) => {
   try {
-    const newEmployees = Array.isArray(req.body) ? req.body : [req.body]
-    const employeesWithStatus = await Promise.all(newEmployees.map(async (em) => (
-      await validateSingleEmployee(em)
-    )))
+    const isStrictValidation = req.method === 'POST'
+    const newEmployees = Array.isArray(req.body)
+      ? req.body
+      : [req.body]
+
+    const employeesWithStatus = await Promise.all(
+      newEmployees.map(async (em) =>
+        await validateSingleEmployee(em, isStrictValidation)
+      )
+    )
 
     const invalidEmployees = employeesWithStatus.filter(em => !em.isValid)
 

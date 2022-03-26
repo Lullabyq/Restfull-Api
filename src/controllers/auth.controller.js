@@ -64,11 +64,3 @@ exports.getByLogin = async (login) => {
     throw new ServerError()
   }
 }
-
-exports.checkUniq = async (newUser) => {
-  try {
-    return await UsersModel.checkUniq(newUser)
-  } catch (err) {
-    throw new ServerError()
-  }
-}

@@ -1,6 +1,5 @@
 const { v4: uuidv4 } = require('uuid')
 const { ServerError } = require('../errors/error')
-const formatInvalidEmpl = require('../helpers/formatInvalidEmpl')
 const EmployeesModel = require('../models/employees.model')
 
 
@@ -21,14 +20,6 @@ exports.deleteOne = async (id) => {
   try {
     return await EmployeesModel.delete(id)
   } catch (err) {
-    throw new ServerError()
-  }
-}
-
-exports.checkUniq = async (newEmployee) => {
-  try {
-    return await EmployeesModel.checkUniq(newEmployee)
-  } catch(err) {
     throw new ServerError()
   }
 }

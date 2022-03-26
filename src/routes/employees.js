@@ -37,7 +37,7 @@ exports.deleteEmployee = async (req, res, next) => {
   try {
     const { id } = req.params
 
-    await EmployeesController.deleteOne(id) // can i send request to model?
+    await EmployeesController.deleteOne(id)
   } catch (err) {
     return next(err)
   }

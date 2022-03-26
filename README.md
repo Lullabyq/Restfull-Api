@@ -15,5 +15,6 @@ Simple backend server that have 1 entity with CRUD operations and auth functiona
 <br>
 
 TODO:
-1) add postgreSQL db
-2) implement 2 tokens authentication (refresh, access)
+1) add ability to filter, paginate and sort employees
+2) create second entity with positions
+3) implement 2 tokens authentication (refresh, access)

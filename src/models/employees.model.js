@@ -1,15 +1,6 @@
 const db = require('../db')
 
 
-exports.checkUniq = async (newEmp) => {
-  const res = await db.query(
-    'SELECT * FROM employees where birthday = $1 AND firstName = $2 AND lastName = $3',
-    [newEmp.birthday, newEmp.firstName, newEmp.lastName]
-  )
-
-  return !res.rows.length
-}
-
 exports.save = async (newEmpls) => {
   const employees = []
 

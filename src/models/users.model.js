@@ -24,12 +24,3 @@ exports.getByLogin = async (login) => {
 
   return res.rows[0]
 }
-
-exports.checkUniq = async (newUser) => {
-  const res = await db.query(
-    'SELECT * FROM users where login = $1',
-    [newUser.login]
-  )
-
-  return !res.rows.length
-}

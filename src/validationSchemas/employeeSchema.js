@@ -1,7 +1,7 @@
 const { POSITIONS } = require('../constants')
 
 
-module.exports =  {
+const basic =  {
   type: 'object',
   properties: {
     firstName: { type: 'string', maxLength: 100 },
@@ -11,3 +11,11 @@ module.exports =  {
     salary: { type: 'number' },
   },
 }
+
+const strict = {
+  required: ['firstName', 'firstName', 'birthday', 'position', 'salary']
+}
+
+Object.setPrototypeOf(strict, basic)
+
+module.exports = { basic, strict }
