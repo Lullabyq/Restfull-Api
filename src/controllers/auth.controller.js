@@ -1,6 +1,5 @@
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
-const { v4: uuidv4 } = require('uuid')
 
 const { TOKEN_EXP_TIME } = require('../constants')
 const UsersModel = require('../models/users.model')
@@ -11,23 +10,25 @@ exports.register = async (userData) => {
   try {
     const salt = bcrypt.genSaltSync(10)
     const password = bcrypt.hashSync(userData.password, salt)
-    const id = uuidv4()
-    const newUser = {...userData, id, password}
+    const newUser = { ...userData, password }
 
-    const user = await UsersModel.save(newUser)
+    const [user] = await UsersModel.save(newUser)
+
     const token = jwt.sign(
-      { sub: id },
+      { sub: user.id },
       process.env.JWT_KEY,
       { expiresIn: TOKEN_EXP_TIME }
     )
 
     return { token, user }
   } catch (err) {
+    console.log(err.message);
     throw new ServerError()
   }
 }
 
 exports.authenticate = (password, user) => {
+  console.log(user);
   if (!bcrypt.compareSync(password, user.password)) {
     throw new WrongCredentialsError()
   }
@@ -61,6 +62,7 @@ exports.getByLogin = async (login) => {
   try {
     return await UsersModel.getByLogin(login)
   } catch (err) {
+    console.log(err.message);
     throw new ServerError()
   }
 }

@@ -22,7 +22,9 @@ exports.getUsers = async (req, res, next) => {
   try {
     const users = await AuthController.getAll()
 
-    return res.json({ data: users })
+    console.log(users);
+
+    return res.json(users)
   } catch (err) {
     return next(err)
   }

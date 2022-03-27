@@ -5,7 +5,7 @@ exports.getAllEmployees = async (req, res, next) => {
   try {
     const employees = await EmployeesController.getMany()
 
-    return res.json({ data: employees })
+    return res.json(employees)
   } catch (err) {
     return next(err)
   }
@@ -38,6 +38,8 @@ exports.deleteEmployee = async (req, res, next) => {
     const { id } = req.params
 
     await EmployeesController.deleteOne(id)
+
+    return res.status(200).json({})
   } catch (err) {
     return next(err)
   }
@@ -46,14 +48,12 @@ exports.deleteEmployee = async (req, res, next) => {
 exports.updateEmployee = async (req, res, next) => {
   try {
     const { id } = req.params
-    const updatedEmployee = {
-      ...req.body,
-      id
-    }
+    const emp = req.body[0]
 
-    const employee = await EmployeesController.updateEmployee(updatedEmployee)
+    const updatedEmployee = { ...emp, id }
+    const [employee] = await EmployeesController.update(updatedEmployee)
 
-    return res.status(200).json({ data: employee })
+    return res.status(200).json(employee)
   } catch (err) {
     return next(err)
   }

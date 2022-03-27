@@ -1,16 +1,16 @@
 CREATE TABLE users (
-  id VARCHAR NOT NULL,
+  id INT PRIMARY KEY,
   login VARCHAR NOT NULL,
   password VARCHAR NOT NULL,
-  firstName VARCHAR,
-  lastName VARCHAR
+  first_name VARCHAR NOT NULL,
+  last_name VARCHAR NOT NULL
 )
 
 CREATE TABLE employees (
-  id VARCHAR NOT NULL,
-  firstName VARCHAR,
-  lastName VARCHAR,
-  birthday VARCHAR,
-  position VARCHAR,
-  salary INT
+  id INT PRIMARY KEY,
+  first_name VARCHAR NOT NULL,
+  last_name VARCHAR NOT NULL,
+  position VARCHAR NOT NULL,
+  salary INT NOT NULL,
+  birthday VARCHAR
 )

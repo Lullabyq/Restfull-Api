@@ -4,13 +4,16 @@ Simple backend server that have 1 entity with CRUD operations and auth functiona
 
 :star: JWT authentication <br>
 :star: MVC pattern <br>
-:star: AJV library for validation
+:star: PostgreSql db (cloud)
 
 <br>
 
 ### Technologies:
 - Express
 - Node.js
+- PostgreSql (ElephantSql)
+- Ajv (validation)
+- Knex.js (query builder)
 
 <br>
 

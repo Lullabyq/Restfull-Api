@@ -13,7 +13,7 @@ const basic =  {
 }
 
 const strict = {
-  required: ['firstName', 'firstName', 'birthday', 'position', 'salary']
+  required: ['firstName', 'lastName', 'birthday', 'position', 'salary']
 }
 
 Object.setPrototypeOf(strict, basic)

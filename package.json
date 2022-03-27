@@ -4,8 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon ./src/index.js"
+    "start": "nodemon ./src/index.js",
+    "migrate": "knex migrate:latest --knexfile src/db/knexfile.js",
+    "unmigrate": "knex migrate:rollback --knexfile src/db/knexfile.js",
+    "seed": "knex seed:run --knexfile src/db/knexfile.js"
   },
   "author": "",
   "license": "ISC",
@@ -23,6 +25,7 @@
     "express-promise-router": "^4.1.1",
     "jsonwebtoken": "^8.5.1",
     "knex": "^1.0.4",
+    "knex-stringcase": "^1.4.6",
     "pg": "^8.7.3",
     "uuid": "^8.3.2"
   }

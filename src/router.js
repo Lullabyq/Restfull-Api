@@ -16,14 +16,14 @@ const { userValidation, employeeValidation } = require('./middlewares/validation
 const router = Router()
 
 router.route('/')
-  .get((_, res) => res.json({ data: 'Home page' }))
+  .get((_, res) => res.json({ message: 'Home page' }))
 
 router.route('/login')
   .post(authenticateUser)
 
 router.route('/users')
-  .post(userValidation, registerUser)
   .get(getUsers)
+  .post(userValidation, registerUser)
 
 router.route('/employees')
   .all(authorization)
@@ -34,6 +34,7 @@ router.route('/employees/:id')
   .all(authorization)
   .get(getSingleEmployee)
   .put(employeeValidation, updateEmployee)
+  .patch(employeeValidation, updateEmployee)
   .delete(deleteEmployee)
 
 router.route('*')

@@ -5,6 +5,7 @@ exports.errorLogger = (err, req, res, next) => {
 
 exports.errorResponder = (err, req, res, next) => {
   const statusCode = err.statusCode ?? 400
+  console.log('error', err);
   const responseBody = 'errors' in err
     ? { errors: err.errors }
     : { error: err.message }

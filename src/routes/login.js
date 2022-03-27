@@ -12,11 +12,13 @@ exports.authenticateUser = async (req, res, next) => {
 
     const user = await AuthController.getByLogin(login)
 
-    if (!user) {
+    if (!user.length) {
       throw new WrongCredentialsError()
     }
 
-    const accessToken = AuthController.authenticate(password, user)
+    console.log('user', user);
+
+    const accessToken = AuthController.authenticate(password, user[0])
 
     return res.json({ accessToken })
   } catch (err) {

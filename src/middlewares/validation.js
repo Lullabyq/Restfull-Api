@@ -6,6 +6,7 @@ const AuthController = require('../controllers/auth.controller')
 const userSchema = require('../validationSchemas/userSchema')
 const employeeSchema = require('../validationSchemas/employeeSchema')
 const formatInvalidEmpl = require('../helpers/formatInvalidEmpl')
+const formatValidationErrors = require('../helpers/formatValidationErrors')
 
 
 const ajv = new Ajv()
@@ -16,7 +17,7 @@ exports.userValidation = async (req, res, next) => {
     const newUser = req.body
     const validate = ajv.compile(userSchema)
 
-    const registredUser = await AuthController.getByLogin(newUser)
+    const registredUser = await AuthController.getByLogin(newUser.login)
 
     if (registredUser.length) {
       throw new BadRequestError(`User already exists`)
@@ -25,7 +26,9 @@ exports.userValidation = async (req, res, next) => {
     const isValid = validate(newUser)
 
     if (!isValid) {
-      return next(validate.errors)
+      const error = formatValidationErrors(validate.errors)
+
+      return next(error)
     }
 
     return next()
