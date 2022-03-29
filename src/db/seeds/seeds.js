@@ -1,3 +1,5 @@
+const initialEmployees = require('../initialEmployees')
+
 /**
  * @param { import("knex").Knex } knex
  * @returns { Promise<void> }
@@ -14,20 +16,5 @@ exports.seed = async function(knex) {
     }
   ]);
   await knex('employees').del()
-  await knex('employees').insert([
-    {
-      first_name: "fedor",
-      last_name: "abrashin",
-      birthday: "2000-12-28T17:59:10.600Z",
-      position: "Junior Software Engineer",
-      salary: 0
-    },
-    {
-      first_name: "ivan",
-      last_name: "ivanov",
-      birthday: "2001-12-28T17:59:10.600Z",
-      position: "Junior Software Engineer",
-      salary: 100
-    }
-  ]);
+  await knex('employees').insert(initialEmployees);
 };

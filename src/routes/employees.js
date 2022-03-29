@@ -3,7 +3,8 @@ const EmployeesController = require('../controllers/employees.controller')
 
 exports.getAllEmployees = async (req, res, next) => {
   try {
-    const employees = await EmployeesController.getMany()
+    const { limit, offset, filter, order } = req.query
+    const employees = await EmployeesController.getMany(limit, offset, filter, order)
 
     return res.json(employees)
   } catch (err) {

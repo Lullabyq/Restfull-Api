@@ -1,4 +1,5 @@
 const knex = require('../db')
+const { BadRequestError } = require('../errors/error')
 const db = knex('employees')
 
 
@@ -17,9 +18,22 @@ exports.save = async (newEmpls) => {
   return employees
 }
 
-exports.getMany = async () => await db
-  .clone()
-  .select()
+exports.getMany = async ({ limit, offset, column, direction }) => {
+  try {
+    return await db
+      .clone()
+      .select()
+      .limit(limit)
+      .offset(offset)
+      .orderBy(column, direction)
+  } catch (err) {
+    if (err.code === '42703') {
+      throw new BadRequestError('Column is missing, check you query')
+    }
+
+    throw err
+  }
+}
 
 exports.getById = async (id) => await db
   .clone()

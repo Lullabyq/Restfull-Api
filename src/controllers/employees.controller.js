@@ -1,5 +1,6 @@
-const { ServerError } = require('../errors/error')
+const { ServerError, BadRequestError } = require('../errors/error')
 const EmployeesModel = require('../models/employees.model')
+const { DB_PAGINATION_LIMIT } = require('../constants')
 
 
 exports.createMany = async (newEmp) => {
@@ -19,10 +20,19 @@ exports.deleteOne = async (id) => {
   }
 }
 
-exports.getMany = async () => {
+exports.getMany = async (amount, from, filter, order) => {
   try {
-    return await EmployeesModel.getMany()
+    const limit = amount ?? DB_PAGINATION_LIMIT
+    const offset = from ?? 0
+    const column = filter ?? 'id'
+    const direction = order ?? 'asc'
+
+    return await EmployeesModel.getMany({ limit, offset, column, direction })
   } catch (err) {
+    if (err instanceof BadRequestError) {
+      throw err
+    }
+
     throw new ServerError()
   }
 }
