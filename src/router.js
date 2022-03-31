@@ -5,7 +5,8 @@ const {
   getSingleEmployee,
   addNewEmployees,
   deleteEmployee,
-  updateEmployee
+  updateEmployee,
+  patchEmployee
 } = require('./routes/employees')
 const { registerUser, getUsers } = require('./routes/users')
 const { authenticateUser } = require('./routes/login')
@@ -34,7 +35,7 @@ router.route('/employees/:id')
   .all(authorization)
   .get(getSingleEmployee)
   .put(employeeValidation, updateEmployee)
-  .patch(employeeValidation, updateEmployee)
+  .patch(employeeValidation, patchEmployee)
   .delete(deleteEmployee)
 
 router.route('*')

@@ -45,7 +45,13 @@ exports.delete = async (id) => await db
   .del()
   .where({ id })
 
-exports.update = async (newEmployee) => {
+exports.update = async (newEmployee) => await db
+  .clone()
+  .update(newEmployee)
+  .where({ id: newEmployee.id })
+  .returning("*")
+
+exports.patch = async (newEmployee) => {
   const id = newEmployee.id
   const [dbEmp] = await db.select().where({ id })
 

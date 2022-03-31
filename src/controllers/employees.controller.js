@@ -53,3 +53,12 @@ exports.update = async (employee) => {
     throw new ServerError()
   }
 }
+
+exports.patch = async (employee) => {
+  try {
+    return await EmployeesModel.patch(employee)
+  } catch (err) {
+    console.log(err.message);
+    throw new ServerError()
+  }
+}

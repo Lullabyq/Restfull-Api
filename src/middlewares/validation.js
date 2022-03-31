@@ -13,28 +13,24 @@ const ajv = new Ajv()
 addFormats(ajv)
 
 exports.userValidation = async (req, res, next) => {
-  try {
-    const newUser = req.body
-    const validate = ajv.compile(userSchema)
+  const newUser = req.body
+  const validate = ajv.compile(userSchema)
 
-    const registredUser = await AuthController.getByLogin(newUser.login)
+  const registredUser = await AuthController.getByLogin(newUser.login)
 
-    if (registredUser.length) {
-      throw new BadRequestError(`User already exists`)
-    }
-
-    const isValid = validate(newUser)
-
-    if (!isValid) {
-      const error = formatValidationErrors(validate.errors)
-
-      return next(error)
-    }
-
-    return next()
-  } catch (err) {
-    return next(err)
+  if (registredUser.length) {
+    throw new BadRequestError(`User already exists`)
   }
+
+  const isValid = validate(newUser)
+
+  if (!isValid) {
+    const error = formatValidationErrors(validate.errors)
+
+    return next(error)
+  }
+
+  return next()
 }
 
 const validateSingleEmployee = async (employee, isStrict) => {
@@ -49,28 +45,24 @@ const validateSingleEmployee = async (employee, isStrict) => {
 }
 
 exports.employeeValidation = async (req, res, next) => {
-  try {
-    const isStrictValidation = req.method === 'POST'
-    const newEmployees = Array.isArray(req.body)
-      ? req.body
-      : [req.body]
+  const isStrictValidation = req.method === 'POST'
+  const newEmployees = Array.isArray(req.body)
+    ? req.body
+    : [req.body]
 
-    const employeesWithStatus = await Promise.all(
-      newEmployees.map(async (em) =>
-        await validateSingleEmployee(em, isStrictValidation)
-      )
+  const employeesWithStatus = await Promise.all(
+    newEmployees.map(async (em) =>
+      await validateSingleEmployee(em, isStrictValidation)
     )
+  )
 
-    const invalidEmployees = employeesWithStatus.filter(em => !em.isValid)
+  const invalidEmployees = employeesWithStatus.filter(em => !em.isValid)
 
-    if (invalidEmployees.length) {
-      throw { errors: formatInvalidEmpl(invalidEmployees) }
-    }
-
-    req.body = employeesWithStatus.map(em => em.employee)
-
-    return next()
-  } catch (err) {
-    return next(err)
+  if (invalidEmployees.length) {
+    throw { errors: formatInvalidEmpl(invalidEmployees) }
   }
+
+  req.body = employeesWithStatus.map(em => em.employee)
+
+  return next()
 }

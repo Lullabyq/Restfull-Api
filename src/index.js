@@ -1,6 +1,7 @@
 require('dotenv').config()
 
 const express = require('express')
+require('express-async-errors')
 
 const router = require('./router')
 const logger = require('./middlewares/logger')

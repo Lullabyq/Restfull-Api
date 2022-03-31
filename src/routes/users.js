@@ -3,29 +3,21 @@ const { BadRequestError } = require('../errors/error')
 
 
 exports.registerUser = async (req, res, next) => {
-  try {
-    const { password } = req.body
+  const { password } = req.body
 
-    if (!password) {
-      throw new BadRequestError()
-    }
-
-    const { token, user } = await AuthController.register(req.body)
-
-    return res.status(201).json({ token, user })
-  } catch (err) {
-    return next(err)
+  if (!password) {
+    throw new BadRequestError()
   }
+
+  const { token, user } = await AuthController.register(req.body)
+
+  return res.status(201).json({ token, user })
 }
 
 exports.getUsers = async (req, res, next) => {
-  try {
-    const users = await AuthController.getAll()
+  const users = await AuthController.getAll()
 
-    console.log(users);
+  console.log(users);
 
-    return res.json(users)
-  } catch (err) {
-    return next(err)
-  }
+  return res.json(users)
 }
