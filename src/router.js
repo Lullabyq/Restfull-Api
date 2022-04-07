@@ -3,21 +3,17 @@ const Router = require('express-promise-router')
 const {
   getAllEmployees,
   getSingleEmployee,
-  addNewEmployees,
+  addSingleEmployee,
   deleteEmployee,
   updateEmployee,
   patchEmployee
 } = require('./routes/employees')
-const { registerUser, getUsers } = require('./routes/users')
+const { registerUser, getUsers, userValidation } = require('./routes/users')
 const { authenticateUser } = require('./routes/login')
 const authorization = require('./middlewares/authorization')
-const { userValidation, employeeValidation } = require('./middlewares/validation')
 
 
 const router = Router()
-
-router.route('/')
-  .get((_, res) => res.json({ message: 'Home page' }))
 
 router.route('/login')
   .post(authenticateUser)
@@ -29,13 +25,13 @@ router.route('/users')
 router.route('/employees')
   .all(authorization)
   .get(getAllEmployees)
-  .post(employeeValidation, addNewEmployees)
+  .post(addSingleEmployee)
 
 router.route('/employees/:id')
   .all(authorization)
   .get(getSingleEmployee)
-  .put(employeeValidation, updateEmployee)
-  .patch(employeeValidation, patchEmployee)
+  .put(updateEmployee)
+  .patch(patchEmployee)
   .delete(deleteEmployee)
 
 router.route('*')

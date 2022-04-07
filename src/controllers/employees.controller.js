@@ -3,7 +3,7 @@ const EmployeesModel = require('../models/employees.model')
 const { DB_PAGINATION_LIMIT } = require('../constants')
 
 
-exports.createMany = async (newEmp) => {
+exports.create = async (newEmp) => {
   try {
     return await EmployeesModel.save(newEmp)
   } catch (err) {

@@ -1,4 +1,4 @@
-const { POSITIONS } = require('../constants')
+const { POSITIONS } = require('../../constants')
 
 
 const basic =  {

@@ -1,4 +1,5 @@
 const EmployeesController = require('../controllers/employees.controller')
+const EmployeeValidation = require('../validation/employeeValidation')
 
 
 exports.getAllEmployees = async (req, res, next) => {
@@ -12,12 +13,15 @@ exports.getSingleEmployee = async (req, res, next) => {
   const { id } = req.params
   const employee = await EmployeesController.getById(id)
 
-  return res.json({ data: employee })
+  return res.json(employee)
 }
 
-exports.addNewEmployees = async (req, res, next) => {
-  const newEmployees = req.body
-  const employees = await EmployeesController.createMany(newEmployees)
+exports.addSingleEmployee = async (req, res, next) => {
+  const newEmployee = req.body
+
+  EmployeeValidation.create(newEmployee)
+
+  const employees = await EmployeesController.create(newEmployee)
 
   return res.status(201).json(employees)
 }
@@ -32,7 +36,9 @@ exports.deleteEmployee = async (req, res, next) => {
 
 exports.updateEmployee = async (req, res, next) => {
   const { id } = req.params
-  const emp = req.body[0]
+  const emp = req.body
+
+  EmployeeValidation.update(emp)
 
   const updatedEmployee = { ...emp, id }
   const [employee] = await EmployeesController.update(updatedEmployee)
@@ -42,7 +48,9 @@ exports.updateEmployee = async (req, res, next) => {
 
 exports.patchEmployee = async (req, res, next) => {
   const { id } = req.params
-  const emp = req.body[0]
+  const emp = req.body
+
+  EmployeeValidation.patch(emp)
 
   const updatedEmployee = { ...emp, id }
   const [employee] = await EmployeesController.patch(updatedEmployee)

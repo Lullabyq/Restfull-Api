@@ -3,20 +3,25 @@ const { BadRequestError } = require('../errors/error')
 const db = knex('employees')
 
 
-exports.save = async (newEmpls) => {
-  const employees = []
+// exports.save = async (newEmpls) => {
+//   const employees = []
 
-  for (const employee of newEmpls) {
-    const rows = await db
-      .clone()
-      .insert(employee)
-      .returning("*")
+//   for (const employee of newEmpls) {
+//     const rows = await db
+//       .clone()
+//       .insert(employee)
+//       .returning("*")
 
-    employees.push(rows[0])
-  }
+//     employees.push(rows[0])
+//   }
 
-  return employees
-}
+//   return employees
+// }
+
+exports.save = async (employee) => await db
+  .clone()
+  .insert(employee)
+  .returning("*")
 
 exports.getMany = async ({ limit, offset, column, direction }) => {
   try {

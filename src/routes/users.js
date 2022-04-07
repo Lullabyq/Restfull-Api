@@ -1,6 +1,20 @@
 const AuthController = require("../controllers/auth.controller")
+const UserValidation = require('../validation/userValidation')
 const { BadRequestError } = require('../errors/error')
 
+exports.userValidation = async (req, res, next) => {
+  const newUser = req.body
+
+  const registredUser = await AuthController.getByLogin(newUser.login)
+
+  if (registredUser.length) {
+    throw new BadRequestError(`User already exists`)
+  }
+
+  UserValidation.register(newUser)
+
+  return next()
+}
 
 exports.registerUser = async (req, res, next) => {
   const { password } = req.body
@@ -16,8 +30,6 @@ exports.registerUser = async (req, res, next) => {
 
 exports.getUsers = async (req, res, next) => {
   const users = await AuthController.getAll()
-
-  console.log(users);
 
   return res.json(users)
 }
