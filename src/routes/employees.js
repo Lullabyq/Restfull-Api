@@ -3,8 +3,19 @@ const EmployeeValidation = require('../validation/employeeValidation')
 
 
 exports.getAllEmployees = async (req, res, next) => {
-  const { limit, offset, filter, order } = req.query
-  const employees = await EmployeesController.getMany(limit, offset, filter, order)
+  const { limit, offset, sort, order, firstName, lastName } = req.query
+  const filters = {
+    firstName,
+    lastName
+  }
+
+  const employees = await EmployeesController.getMany(
+    limit,
+    offset,
+    sort,
+    order,
+    filters
+  )
 
   return res.json(employees)
 }

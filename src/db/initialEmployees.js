@@ -1,7 +1,7 @@
 const { faker } = require('@faker-js/faker')
 const { POSITIONS } = require('../constants')
 
-const EMPLOYEE_NUMBER = 100
+const EMPLOYEE_NUMBER = 200
 
 faker.seed(1)
 
@@ -26,8 +26,6 @@ for (let i = 0; i < EMPLOYEE_NUMBER; i++) {
     position,
     salary,
   })
-
-  console.log(employees[i]);
 }
 
 module.exports = employees

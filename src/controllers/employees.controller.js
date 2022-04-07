@@ -20,14 +20,20 @@ exports.deleteOne = async (id) => {
   }
 }
 
-exports.getMany = async (amount, from, filter, order) => {
+exports.getMany = async (amount, from, sort, order, filters) => {
   try {
     const limit = amount ?? DB_PAGINATION_LIMIT
     const offset = from ?? 0
-    const column = filter ?? 'id'
+    const column = sort ?? 'id'
     const direction = order ?? 'asc'
 
-    return await EmployeesModel.getMany({ limit, offset, column, direction })
+    return await EmployeesModel.getMany({
+      limit,
+      offset,
+      column,
+      direction,
+      filters
+    })
   } catch (err) {
     if (err instanceof BadRequestError) {
       throw err

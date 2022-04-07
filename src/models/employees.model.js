@@ -23,7 +23,7 @@ exports.save = async (employee) => await db
   .insert(employee)
   .returning("*")
 
-exports.getMany = async ({ limit, offset, column, direction }) => {
+exports.getMany = async ({ limit, offset, column, direction, filters }) => {
   try {
     return await db
       .clone()
@@ -31,6 +31,8 @@ exports.getMany = async ({ limit, offset, column, direction }) => {
       .limit(limit)
       .offset(offset)
       .orderBy(column, direction)
+      .whereILike('firstName', `%${filters.firstName ?? ''}%`)
+      .andWhereILike('lastName', `%${filters.lastName ?? ''}%`)
   } catch (err) {
     if (err.code === '42703') {
       throw new BadRequestError('Column is missing, check you query')

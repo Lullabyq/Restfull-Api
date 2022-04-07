@@ -28,7 +28,6 @@ exports.register = async (userData) => {
 }
 
 exports.authenticate = (password, user) => {
-  console.log(user);
   if (!bcrypt.compareSync(password, user.password)) {
     throw new WrongCredentialsError()
   }

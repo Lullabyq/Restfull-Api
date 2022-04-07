@@ -15,8 +15,6 @@ exports.authenticateUser = async (req, res, next) => {
     throw new WrongCredentialsError()
   }
 
-  console.log('user', user);
-
   const accessToken = AuthController.authenticate(password, user[0])
 
   return res.json({ accessToken })
