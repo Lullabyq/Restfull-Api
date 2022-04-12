@@ -1,3 +1,4 @@
-module.exports = (err) => ({
-  message: `${err[0].instancePath.slice(1)} ${err[0].message}`
-})
+module.exports = (errors) => errors
+  .map(err => ({
+    message: `${err.instancePath.slice(1)} ${err.message}`
+  }))

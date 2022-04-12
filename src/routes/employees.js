@@ -1,21 +1,12 @@
 const EmployeesController = require('../controllers/employees.controller')
+const { parseQuery } = require('../helpers/parseQuery')
 const EmployeeValidation = require('../validation/employeeValidation')
 
 
 exports.getAllEmployees = async (req, res, next) => {
-  const { limit, offset, sort, order, firstName, lastName } = req.query
-  const filters = {
-    firstName,
-    lastName
-  }
+  const parsedQuery = parseQuery(req.query)
 
-  const employees = await EmployeesController.getMany(
-    limit,
-    offset,
-    sort,
-    order,
-    filters
-  )
+  const employees = await EmployeesController.getMany(parsedQuery)
 
   return res.json(employees)
 }

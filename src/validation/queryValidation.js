@@ -1,16 +1,16 @@
 const Ajv = require('ajv')
 const addFormats = require('ajv-formats')
 
-const userSchema = require('./validationSchemas/userSchema')
 const { makeValidation } = require('./helpers/makeValidation')
+const querySchema = require('./validationSchemas/querySchema')
 
 
 const ajv = new Ajv({ allErrors: true })
 addFormats(ajv)
 
 
-exports.register = (newUser) => {
-  const validate = ajv.compile(userSchema)
+exports.validate = (query) => {
+  const validate = ajv.compile(querySchema)
 
-  return makeValidation(newUser, validate)
+  return makeValidation(query, validate)
 }

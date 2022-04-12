@@ -1,24 +1,13 @@
 const Ajv = require('ajv')
 const addFormats = require('ajv-formats')
-const { default: ValidationError } = require('ajv/dist/runtime/validation_error')
 
 const employeeSchema = require('./validationSchemas/employeeSchema')
-const formatValidationErrors = require('../helpers/formatValidationErrors')
+const makeValidation = require('./helpers/makeValidation')
 
 
-const ajv = new Ajv()
+const ajv = new Ajv({ allErrors: true })
 addFormats(ajv)
 
-
-const makeValidation = (target, validate) => {
-  const isValid = validate(target)
-
-  if (!isValid) {
-    const errors = formatValidationErrors(validate.errors)
-
-    throw new ValidationError(errors)
-  }
-}
 
 exports.create = (emp) => {
   const validate = ajv.compile(employeeSchema.strict)

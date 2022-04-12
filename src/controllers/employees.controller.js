@@ -1,13 +1,11 @@
-const { ServerError, BadRequestError } = require('../errors/error')
+const { ServerError } = require('../errors/error')
 const EmployeesModel = require('../models/employees.model')
-const { DB_PAGINATION_LIMIT } = require('../constants')
 
 
 exports.create = async (newEmp) => {
   try {
     return await EmployeesModel.save(newEmp)
   } catch (err) {
-    console.log(err.message);
     throw new ServerError()
   }
 }
@@ -20,25 +18,10 @@ exports.deleteOne = async (id) => {
   }
 }
 
-exports.getMany = async (amount, from, sort, order, filters) => {
+exports.getMany = async (query) => {
   try {
-    const limit = amount ?? DB_PAGINATION_LIMIT
-    const offset = from ?? 0
-    const column = sort ?? 'id'
-    const direction = order ?? 'asc'
-
-    return await EmployeesModel.getMany({
-      limit,
-      offset,
-      column,
-      direction,
-      filters
-    })
+    return await EmployeesModel.getMany(query)
   } catch (err) {
-    if (err instanceof BadRequestError) {
-      throw err
-    }
-
     throw new ServerError()
   }
 }
@@ -55,7 +38,6 @@ exports.update = async (employee) => {
   try {
     return await EmployeesModel.update(employee)
   } catch (err) {
-    console.log(err.message);
     throw new ServerError()
   }
 }
@@ -64,7 +46,6 @@ exports.patch = async (employee) => {
   try {
     return await EmployeesModel.patch(employee)
   } catch (err) {
-    console.log(err.message);
     throw new ServerError()
   }
 }
